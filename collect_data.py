@@ -17,6 +17,23 @@ def save_frame(frame,circle_position):
   cv2.imwrite(name,frame)
   return name
 
+def draw_circle(frame,circle_position):
+  
+  crow,ccol = circle_position
+  
+  row_one = crow - RADIUS
+  row_two = crow + RADIUS
+  col_one  = ccol - RADIUS
+  col_two = ccol + RADIUS
+
+  cv2.rectangle(frame, 
+                (col_one, row_one),
+                (col_two, row_two),
+                (0, 255, 0), 
+                10)
+
+  return frame
+
 def main():
   cap = cv2.VideoCapture(0)
 
@@ -30,7 +47,7 @@ def main():
     _, frame = cap.read()
 
     keypress = cv2.waitKey(1)
-    # draw_circle(frame,circle_position)
+    draw_circle(frame,circle_position)
 
     cv2.imshow("Live Feed",frame)
 
