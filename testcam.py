@@ -1,20 +1,37 @@
 import cv2 
 
-cap = cv2.VideoCapture(0)
+import numpy as np
+MAXCOLS = 1280
+MAXROWS = 720
+RADIUS = 10
+def generate_random_circle():
+  return np.random.rand(2) * [MAXROWS,MAXCOLS]
 
-if not (cap.isOpened()):
-  print("Could not open video device")
+def main():
+  cap = cv2.VideoCapture(0)
 
-#To set the resolution
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+  #To set the resolution
+  cap.set(cv2.CAP_PROP_FRAME_WIDTH, MAXCOLS)
+  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, MAXROWS)
 
-while True:
-  ret, frame = cap.read()
-  cv2.imshow("preview",frame)
+  circle_position = generate_random_circle()
 
-  if cv2.waitKey(1) == ord("q"):
-    break
+  while True:
+    _, frame = cap.read()
 
-cap.release()
-cv2.destroyAllWindows()
+    draw_circle(frame,circle_position)
+
+    cv2.imshow("Live Feed",frame)
+
+    if cv2.waitKey(1) == ord(" "):
+      save_frame(frame,circle_position)
+      circle_position = generate_random_circle()
+
+    if cv2.waitKey(1) == ord("q"):
+      break
+
+  cap.release()
+  cv2.destroyAllWindows()
+
+if __name__=="__main__":
+  main()
