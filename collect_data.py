@@ -13,7 +13,7 @@ RADIUS = 10
 SAVEDIR = "data"
 
 def is_right_of(linep1,linep2,p):
-  # use the cross product to determine whether p is to the right of the line from linep1 to linep2 (thumbs up)
+  # use the cross product to determine whether p is to the right of the line from linep1 to linep2 (right thumb out of the screen)
   # all points are in (row,col) = (y,x) format
   return ((linep2[1]-linep1[1])*(p[0]-linep1[0])-(linep2[0]-linep1[0])*(p[1]-linep1[1]))>0
 
@@ -64,16 +64,16 @@ def main():
 
   while True:
     _, frame = cap.read()
-    frame = cv2.flip(frame, 1)
-
     keypress = cv2.waitKey(1)
-    draw_circle(frame,circle_position)
 
-    cv2.imshow("Live Feed",frame)
+    frame = cv2.flip(frame, 1)
+    canvas = frame.copy()
+
+    draw_circle(canvas,circle_position)
+    cv2.imshow("Live Feed",canvas)
 
     if keypress == ord(" "):
       save_frame(frame,circle_position)
-
       circle_position = generate_random_circle()
 
     elif keypress == ord("q"):
