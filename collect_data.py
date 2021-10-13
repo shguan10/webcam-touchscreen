@@ -4,11 +4,31 @@ import pdb
 
 MAXCOLS = 1280
 MAXROWS = 720
+
+TRAP_TOP_LEFT = (50,470)
+TRAP_TOP_RIGHT = (50,780)
+TRAP_BOT_LEFT = (MAXROWS,0)
+TRAP_BOT_RIGHT = (MAXROWS,MAXCOLS)
 RADIUS = 10
 SAVEDIR = "data"
 
+def is_right_of(linep1,linep2,p):
+  # use the cross product to determine whether p is to the right of the line from linep1 to linep2 (thumbs up)
+  # all points are in (row,col) = (y,x) format
+  return ((linep2[1]-linep1[1])*(p[0]-linep1[0])-(linep2[0]-linep1[0])*(p[1]-linep1[1]))>0
+
+def is_valid(p):
+  if p[0]<TRAP_TOP_LEFT[0]: return False
+  if p[0]>TRAP_BOT_LEFT[0]: return False
+  if not is_right_of(TRAP_BOT_LEFT,TRAP_TOP_LEFT,p): return False
+  if is_right_of(TRAP_BOT_RIGHT,TRAP_TOP_RIGHT,p): return False
+  return True
+
 def generate_random_circle():
-  return (np.random.rand(2) * [MAXROWS,MAXCOLS]).astype(int)
+  p = (0,0)
+  while not is_valid(p):
+    p = (np.random.rand(2) * [MAXROWS,MAXCOLS]).astype(int)
+  return p
 
 def save_frame(frame,circle_position):
   name = "/".join([SAVEDIR,
@@ -37,7 +57,6 @@ def draw_circle(frame,circle_position):
 def main():
   cap = cv2.VideoCapture(0)
 
-  #To set the resolution
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, MAXCOLS)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, MAXROWS)
 
@@ -45,6 +64,7 @@ def main():
 
   while True:
     _, frame = cap.read()
+    frame = cv2.flip(frame, 1)
 
     keypress = cv2.waitKey(1)
     draw_circle(frame,circle_position)
