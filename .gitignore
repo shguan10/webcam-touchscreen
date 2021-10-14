@@ -1,3 +1,5 @@
 data/*
 *.pyc
 data2/*
+background/*
+filtered/*
