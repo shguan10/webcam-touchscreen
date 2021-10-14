@@ -189,29 +189,31 @@ def filter(cap,finger_pixels,background):
 
 def mousecb(event,x,y,flags,userdata):
   if event == cv2.EVENT_LBUTTONDOWN:
-    userdata.x = x
-    userdata.y = y
+    cv2.imwrite("data/"+str(x)+"_"+str(y)+".jpg",userdata.frame)
 
 class Userdata:
   def __init__(self):
-    self.x = None
-    self.y = None
     self.frame = None
 
-def get_sample(cap,finger_pixels,background):
+def get_samples(cap,finger_pixels,background):
   cv2.namedWindow("filtered")
   cv2.moveWindow("filtered",WIN[0],WIN[1])
   ud = Userdata()
   cv2.setMouseCallback("filtered",mousecb,ud)
 
-  while ud.x is None:
+  while True:
     _, frame = cap.read()
+    keypress = cv2.waitKey(1)
     frame = cv2.flip(frame, 1)
 
     frame = background_filter(frame,background)
     frame = fuzzy_mask(frame,pixels=finger_pixels)
+    ud.frame = frame
 
-  cv2.imwrite("data/"+str(ud.x)+"_"+str(ud.y)+".jpg",frame)
+    cv2.imshow("filtered",frame)
+
+    if keypress == ord("q"):
+      break
   cv2.destroyAllWindows()
   
 
